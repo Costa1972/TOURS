@@ -1,28 +1,32 @@
 package ru.costa.tours.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Table(name = "payments")
 @Builder
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class Payment {
+public class Payment implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, nullable = false, name = "payment_id")
+    @Column(unique = true, nullable = false, name = "id")
     private Long id;
     @Column(name = "amount")
     private double amount;
+    @Column(name = "payment_basis")
+    Set<PaymentBasis> paymentBasisSet;
 
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "payment_basis_id", referencedColumnName = "id")
-    private PaymentBasis paymentBasis;
+    public Payment(Long id, double amount, Set<PaymentBasis> paymentBasisSet) {
+        this.id = id;
+        this.amount = amount;
+        this.paymentBasisSet = paymentBasisSet;
+    }
 }

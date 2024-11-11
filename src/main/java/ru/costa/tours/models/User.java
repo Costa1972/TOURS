@@ -5,20 +5,23 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
+import java.io.Serializable;
 import java.util.Set;
 
 @Entity
-@Table(name = "persons")
+@Table(name = "users")
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Person {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "person_id")
+    @Column(name = "user_id")
     private Long id;
     @Column(name = "first_name")
     private String firstName;
@@ -30,6 +33,8 @@ public class Person {
     private String phone;
     @Column(name = "email")
     private String email;
+    @Column(name = "password")
+    private String password;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "passport_id", referencedColumnName = "id")
@@ -38,4 +43,10 @@ public class Person {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "payment_id")
     private Set<Payment> payments;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @Fetch(FetchMode.JOIN)
+    private Set<Role> roles;
 }
